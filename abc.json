@@ -1,0 +1,14 @@
+{
+    "name": "form-storage",
+    "version": "1.0",
+    "desc": "",
+    "cover": "",
+    "tag":"form,storage,auto,save",
+    "author": {
+        "name": "舒克",
+        "email": "shuke.cl@taobao.com",
+        "page": ""
+    },
+    "type": "kissy-gallery",
+    "type-url": "http://gallery.kissyui.com/guide"
+}

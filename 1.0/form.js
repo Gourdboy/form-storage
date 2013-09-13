@@ -1,30 +1,13 @@
-/**
- * 基于本地存储实现的表单临时保存功能，支持自动保存，用户自定义保存
- */
-KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
+KISSY.add(function (S,RichBase , Ajax , Tmpl , FormStorage){
     var win = window;
     var pagePath = win.location.pathname;
     var historyTmpl = '<ul>{{#each data}}<li class="J_Item" data-index="{{xindex}}">{{#if remark}}<span class="label label-warning">{{/if}}{{remark}}{{#if remark}}</span>{{/if}}  {{title}} <a href="#" class="J_Restore">恢复</a> <a href="#" class="J_EditRemark">备注</a> <a href="#" class="J_DelStorage">删除</a></li>{{/each}}</ul>';
-    var FormStorage = RichBase.extend({
+    var Form = RichBase.extend({
         initializer : function (){
-            if (!this.get('node')) {
-                return;
-            }
-            var form = this.get('node');
-            var formId = this.get('node').attr('id');
-            if (!formId) {
-                return;
-            }
-
-            /*parse html to attribute*/
-            var timer = form.attr('data-auto-save-timer');
-            timer && this.set('autoSaveTimer' , timer);
-            this.set('allowAutoSave' , form.attr('data-auto-save') === 'on' ? true : false);
-            this.set('autoSaveMax' , form.attr('data-auto-save-max') || this.get('autoSaveMax'));
-
             this.renderUI();
             this.bindUI();
-            var source = Storage.load(pagePath,formId);
+            var formId = this.get('node').attr('id');
+            var source = FormStorage.load(pagePath,formId);
             if (source) {
                 this.set('source' , source);
             }
@@ -67,6 +50,7 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                 }
                 var time = new Date();
                 this.add({
+                    title : S.substitute('手动保存 {year}-{month}-{date} {hour}:{minute}:{second}', this._getTime(time)),
                     type  : 1,//手动添加
                     remark: '',
                     time  : time,
@@ -75,14 +59,16 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
             },this);
             this.on('afterSourceChange' , this._syncHistoryUI , this);
             var that = this;
-            //自动保存
-            if (this.get('allowAutoSave')) {
-                var autoTimer = this.get('autoSaveTimer');
+            if (form.attr('data-auto-save') === 'on') {
+                var autoTimer = 3;
+                if (form.attr('data-auto-save-timer')) {
+                    autoTimer = form.attr('data-auto-save-timer')
+                }
                 setInterval(function (){
                     var data = that.formToData(form);
 
                     /**
-                     * 自动保存条数不超过指定条数
+                     * 自动保存条数不超过5条
                      */
                     var autoCount = 0;
                     var lastAutoIndex = -1;
@@ -92,7 +78,7 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                             lastAutoIndex = index;
                         }
                     });
-                    if (autoCount > that.get('autoSaveMax')) {
+                    if (autoCount > 5) {
                         that.del(lastAutoIndex);
                     }
 
@@ -102,7 +88,7 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                         time : time + 0,
                         data : data
                     },'auto');
-                },1000*autoTimer);
+                },1000*60*autoTimer);
             }
         },
         /**
@@ -240,7 +226,7 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                 return item;
             },this);
             this.listNode.html(new Tmpl(historyTmpl).render({data: source}));
-            Storage.save(pagePath, this.get('node').attr('id'), source);
+            FormStorage.save(pagePath, this.get('node').attr('id'), source);
         },
         destructor : function (){
 
@@ -263,22 +249,13 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                 value : []
             },
             /**
-             * 是否允许自动保存
-             * @attribute allowAutoSave
-             * @type Boolean
-             * @default false
-             **/
-            allowAutoSave : {
-                value : false
-            },
-            /**
              * 自动存储的时间间隔,单位：秒
              * @attribute autoSaveTimer
              * @type number
              * @default 5
              **/
             autoSaveTimer : {
-                value : 300//秒
+                value : 5//秒
             },
             /**
              * 自动存储的最大值
@@ -290,31 +267,30 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                 value : 5
             }
         },
-        bind : function (cfg){
-            //默认值
-            cfg = S.merge({
-                selector : 'form',
-                callback : null
-            });
-            S.all(cfg.selector).each(function (form,index){
+        bind : function (selector , callback){
+            S.all(selector).each(function (form,index){
                 if (form.attr('data-save') !== 'on') {
                     return;
                 }
-                //没有id的补足id
                 var form_id = form.attr('id');
                 if (!form_id) {
-                    form_id = 'J_StorageId' + index ;
+                    form_id = 'J_FormStorageId' + index ;
                     form.attr('id' , form_id);
                 }
-                var formStorage = new Form({
+                var formStorage = new FormStorage({
                     node : form
                 });
-                if (S.isFunction(cfg.callback)) {
-                    cfg.callback.call(this , formStorage , form_id);
+                if (S.isFunction(callback)) {
+                    callback.call(this , formStorage , form_id);
                 }
+                formStorage.on('restore' , function (e){
+                    EventCenter.fire('formRestore' , {
+                        srcForm : form_id
+                    });
+                });
 
             },this);
         }
     });
-    return FormStorage;
-},{requires : ['rich-base','ajax','xtemplate','./storage','node' , 'event','sizzle']});
+    return Form;
+},{requires : ['rich-base','ajax','xtemplate','./storage','node' , 'event']});

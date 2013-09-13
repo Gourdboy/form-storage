@@ -1,0 +1,32 @@
+/* form auto save*/
+.form-storage{
+  font-size:12px;
+  display: inline-block;
+  position: relative;
+  .storage-list{
+    transition: width 0.3s ease-out,height 0.3s ease-out;
+    height: 0;
+    overflow: hidden;
+    font-size:0;
+    line-height: 0;
+    li{
+      padding:2px 0;
+    }
+  }
+  .storage-list-content{
+    height:145px;
+    overflow-y:scroll;
+  }
+  &:hover{
+    .storage-list{
+      visibility: visible;
+      width:400px;
+      height:200px;
+      font-size:12px;
+      line-height: 1.67;
+      .alert{
+        height:180px;
+      }
+    }
+  }
+}

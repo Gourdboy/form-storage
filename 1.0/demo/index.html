@@ -1,22 +1,30 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <title>form-storage的demo</title>
-    <script src="http://g.tbcdn.cn/kissy/k/1.3.0/kissy-min.js" charset="utf-8"></script>
-    <link rel="stylesheet" href="http://g.tbcdn.cn/kissy/k/1.3.0/css/dpl/base-min.css">
-</head>
-<body>
-<h2>form-storage的demo</h2>
-
+<title>淘宝旅行-机票代理商后台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Bootstrap -->
+<link href="http://g.tbcdn.cn/trip/flight-agent/0.0.1/widgets/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" href="http://g.tbcdn.cn/trip/flight-agent/0.0.1/widgets/base/base.css"/>
+<script type="text/javascript">
+    var GLOBAL_CONFIG = {
+        version : '0.0.1',
+        domain : 'http://g.tbcdn.cn/'
+    }
+</script>
+<script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js"></script>
+<script type="text/javascript" src="http://g.tbcdn.cn/trip/flight-agent/0.0.1/config.js"></script>
+<!--[if lt IE 9]><script src="http://a.tbcdn.cn/app/dp/s/html5/js/??html5shiv-min.js"></script><![endif]-->
 <script>
     var S = KISSY;
+    var galleryName = 'gallery';
     if (S.Config.debug) {
         var srcPath = "../../../";
+        galleryName = "test";
         S.config({
             packages:[
                 {
-                    name:"gallery",
+                    name:galleryName,
                     path:srcPath,
                     charset:"utf-8",
                     ignorePackageNameInUri:true
@@ -25,9 +33,718 @@
         });
     }
 
-    S.use('gallery/form-storage/1.0/index', function (S, Form-storage) {
-          new Form-storage();
-    })
+</script>
+
+</head>
+<body>
+<header class="navbar agent-top" role="banner">
+   <div class="navbar-header">
+     <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+       <span class="sr-only">Toggle navigation</span>
+       <span class="icon-bar"></span>
+       <span class="icon-bar"></span>
+       <span class="icon-bar"></span>
+     </button>
+     <a href="http://g.tbcdn.cn/trip/flight-agent/0.0.1/" class="navbar-brand">FormStorage</a>
+   </div>
+   <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+     <ul class="nav navbar-nav">
+       <li class="active">
+         <a href="#">Auth : 舒克(shuke.cl@taobao.com)</a>
+       </li>
+     </ul>
+     <div class="pull-right userinfo"> <span class="glyphicon glyphicon-user"></span> 退出登录</div>
+   </nav>
+</header>
+<div class="layout clearfix">
+    <link rel="stylesheet" href="http://g.tbcdn.cn/trip/flight-agent/0.0.1/widgets/market-rule/index.css"/>
+    <style type="text/css">
+        .exclude-area{
+            margin:6px 0 0 10px;
+            _display:inline;
+        }
+    </style>
+    <div class="content" style="margin-left: 0">
+        <div class="mod">
+            <div class="mod-hd" class="J_Tabs">
+                <h3>Demo演示</h3>
+            </div>
+            <div class="mod-bd">
+
+            <div class="alert alert-info">
+                <p>看到这么长的一个表单，大家就知道，<span class="text-warning">做机票的其实比做鸡还不容易</span>，别说每天要填N次的卖家伙伴们，一年做一次表单的前端老鼠都伤不起</p>
+                <p>要是再遇到中途上个厕所回来浏览器被宠物给关掉了，填完一半停电了，提交完之后发现下一次要填写的内容就一个字段不一致，那就悲剧了</p>
+                <p>还是用“前端的思维方式”来解决一下这种数据意外丢失或重复填写的问题吧.</p>
+            </div>
+                <form action="" id="J_Form" data-save="on" data-auto-save="on" class="J_Tabs">
+                <p class="text-danger">亮点在上面</p>
+                    <table class="table-form">
+                        <tbody>
+                        <tr>
+                            <th width="150">航空公司<span class="required">*</span></th>
+                            <td><input type="text" name="air" class="form-control J_Ac" data-type="aircompany" value=""/></td>
+                        </tr>
+                        <tr>
+                            <th>航程类型 <span class="required">*</span></th>
+                            <td>
+                                <label><input type="radio" name="nn3" value="1" class="J_TabsTrigger" data-tab-show="" data-tab-hide=".J_BackDateArea" />单程</label>
+                                <label><input type="radio" name="nn3" value="2" class="J_TabsTrigger" data-tab-show=".J_BackDateArea" data-tab-hide="" checked />往返</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>出发机场<span class="required">*</span></th>
+                            <td><input type="text" name="depCity" class="form-control J_Upper" placeholder="机场三字码"  value=""/></td>
+                        </tr>
+                        <tr>
+                            <th>到达机场<span class="required">*</span></th>
+                            <td><input type="text" name="depCity" class="form-control J_Upper" placeholder="机场三字码"  value=""/></td>
+                        </tr>
+                        <tr>
+                            <th>旅行日期</th>
+                            <td>
+                                <!--去程-->
+                                <div class="J_DepDateArea clearfix">
+                                    <div id="J_CustomDepTime" class="pull-left">
+                                        <p>
+                                            <label class="label label-success">去程日期</label>
+                                            <span id="J_DepExcludeRadioArea">
+                                                    <label><input type="radio" name="ttts" class="J_TabsTrigger" data-tab-show="" data-tab-hide=".J_TravelexcludeDepDate" value="1"/> 没有排除日期</label>
+                                                    <label><input type="radio" name="ttts" class="J_TabsTrigger" checked  data-tab-show=".J_TravelexcludeDepDate" data-tab-hide="" value="2"/> 有排除日期</label>
+                                            </span>
+                                        </p>
+                                        <div class="J_TableEditContent"></div>
+                                        <textarea name="depTimes" id="J_CustomDepTimeInput" class="hidden">
+                                            {"data":[{"startTime":"2013-09-03","endTime":"2013-09-06"},{"startTime":"2013-09-02","endTime":"2013-09-18"},{"startTime":"2013-09-03","endTime":"2013-09-28"}]}
+                                        </textarea>
+                                        <script type="text/tmpl" class="J_Tmpl">
+                                            <table class="table-inner table-bordered">
+                                                <thead>
+                                                <tr>
+                                                <th>开始时间</th>
+                                                <th>截止时间</th>
+                                                <th>操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#each data}}
+                                                <tr class="J_Item" data-index="{{xindex}}">
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="startTime" value="{{startTime}}" size="12"/>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="endTime" value="{{endTime}}" size="12"/>
+                                                    </td>
+                                                    <td><a href="#" class="J_Del">删除</a></td>
+                                                </tr>
+                                                {{/each}}
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td colspan="4"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加时间段</button></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </script>
+                                    </div>
+                                    <div id="J_TravelExcludeDepDate" class="pull-left exclude-area J_TravelexcludeDepDate">
+                                        <p><label class="label label-default">去程排除日期</label></p>
+                                        <div class="J_TableEditContent"></div>
+                                        <textarea name="excludeDepTimes" id="J_TravelExcludeDepDateInput" class="hidden">
+
+                                        </textarea>
+                                        <script type="text/tmpl" class="J_Tmpl">
+                                            <table class="table-inner table-bordered">
+                                                <thead>
+                                                <tr>
+                                                <th>排除开始时间</th>
+                                                <th>排除截止时间</th>
+                                                <th>操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#each data}}
+                                                <tr class="J_Item" data-index="{{xindex}}">
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="startTime" value="{{startTime}}" size="12"/>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="endTime" value="{{endTime}}" size="12"/>
+                                                    </td>
+                                                    <td><a href="#" class="J_Del">删除</a></td>
+                                                </tr>
+                                                {{/each}}
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td colspan="4"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加排除时间段</button></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </script>
+                                    </div>
+                                </div>
+                                <!--去程 end-->
+
+
+                                <!--返程-->
+                                <div class="J_BackDateArea clearfix">
+                                    <div id="J_CustomBackTime" class="pull-left">
+                                        <p style="margin-top:15px;">
+                                            <label class="label label-success">返程日期</label>
+                                            <label><input type="radio" name="ttt2" class="J_TabsTrigger" data-tab-show="" data-tab-hide=".J_TravelExcludeBackDate" value="1"/> 没有排除日期</label>
+                                            <label><input type="radio" name="ttt2" class="J_TabsTrigger" checked data-tab-show=".J_TravelExcludeBackDate" data-tab-hide="" value="2"/> 有排除日期</label>
+                                        </p>
+                                        <div class="J_TableEditContent"></div>
+                                        <textarea name="backTimes" id="J_CustomBackTimeInput" class="hidden">
+                                        </textarea>
+                                        <script type="text/tmpl" class="J_Tmpl">
+                                        <table class="table-inner table-bordered">
+                                            <thead>
+                                            <tr>
+                                            <th>开始时间</th>
+                                            <th>截止时间</th>
+                                            <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#each data}}
+                                            <tr class="J_Item" data-index="{{xindex}}">
+                                                <td>
+                                                    <input type="text" name="" class="form-control J_EditControl J_Date" data-name="startTime" value="{{startTime}}" size="12"/>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="" class="form-control J_EditControl J_Date" data-name="endTime" value="{{endTime}}" size="12"/>
+                                                </td>
+                                                <td><a href="#" class="J_Del">删除</a></td>
+                                            </tr>
+                                            {{/each}}
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="4"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加时间段</button></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </script>
+                                    </div>
+                                    <div id="J_TravelExcludeBackDate" class="pull-left exclude-area J_TravelExcludeBackDate">
+                                        <p style="margin-top:15px;"><label class="label label-default">返程排除日期</label></p>
+                                        <div class="J_TableEditContent"></div>
+                                        <textarea name="excludeBackTimes" id="J_TravelExcludeBackDateInput" class="hidden">
+
+                                        </textarea>
+                                        <script type="text/tmpl" class="J_Tmpl">
+                                        <table class="table-inner table-bordered">
+                                            <thead>
+                                            <tr>
+                                            <th>排除开始时间</th>
+                                            <th>排除截止时间</th>
+                                            <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#each data}}
+                                            <tr class="J_Item" data-index="{{xindex}}">
+                                                <td>
+                                                    <input type="text" name="" class="form-control J_EditControl J_Date" data-name="startTime" value="{{startTime}}" size="12"/>
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="" class="form-control J_EditControl J_Date" data-name="endTime" value="{{endTime}}" size="12"/>
+                                                </td>
+                                                <td><a href="#" class="J_Del">删除</a></td>
+                                            </tr>
+                                            {{/each}}
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="4"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加排除时间段</button></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </script>
+                                </div>
+                                </div>
+                                <!--返程 end-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>销售日期</th>
+                            <td>
+                                <div class="J_SaleDateArea clearfix">
+                                    <div id="J_CustomSaleTime" class="pull-left">
+                                        <p>
+                                            <label class="label label-warning">销售日期</label> <a href="#" id="J_SetAsDepArea">复制去程日期</a>
+                                            &nbsp;&nbsp;
+                                            <span id="J_SaleExcludeRadioArea">
+                                                <label><input type="radio" name="ttt5" class="J_TabsTrigger" data-tab-show="" data-tab-hide=".J_ExcludeSaleDate" value="1"/> 没有排除日期</label>
+                                                <label><input type="radio" name="ttt5" class="J_TabsTrigger"  checked data-tab-show=".J_ExcludeSaleDate" data-tab-hide="" value="2"/> 有排除日期</label>
+                                            </span>
+                                        </p>
+                                        <div class="J_TableEditContent"></div>
+                                        <textarea name="saleTimes" id="J_CustomSaleTimeInput" class="hidden">
+
+                                        </textarea>
+                                        <script type="text/tmpl" class="J_Tmpl">
+                                            <table class="table-inner table-bordered">
+                                                <thead>
+                                                <tr>
+                                                <th>开始时间</th>
+                                                <th>截止时间</th>
+                                                <th>操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#each data}}
+                                                <tr class="J_Item" data-index="{{xindex}}">
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="startTime" value="{{startTime}}" size="12"/>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="endTime" value="{{endTime}}" size="12"/>
+                                                    </td>
+                                                    <td><a href="#" class="J_Del">删除</a></td>
+                                                </tr>
+                                                {{/each}}
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td colspan="4"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加时间段</button></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </script>
+                                    </div>
+                                    <div id="J_ExcludeSaleDate" class="pull-left exclude-area J_ExcludeSaleDate">
+                                        <p><label class="label label-default">销售排除日期</label></p>
+                                        <div class="J_TableEditContent"></div>
+                                        <textarea name="excludeSaleTimes" id="J_ExcludeSaleDateInput" class="hidden">
+
+                                        </textarea>
+                                        <script type="text/tmpl" class="J_Tmpl">
+                                            <table class="table-inner table-bordered">
+                                                <thead>
+                                                <tr>
+                                                <th>排除开始时间</th>
+                                                <th>排除截止时间</th>
+                                                <th>操作</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#each data}}
+                                                <tr class="J_Item" data-index="{{xindex}}">
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="startTime" value="{{startTime}}" size="12"/>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="" class="form-control J_EditControl J_Date" data-name="endTime" value="{{endTime}}" size="12"/>
+                                                    </td>
+                                                    <td><a href="#" class="J_Del">删除</a></td>
+                                                </tr>
+                                                {{/each}}
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td colspan="4"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加排除时间段</button></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </script>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>适用承认乘客类型<span class="required">*</span></th>
+                            <td>
+                                <label><input type="checkbox" name="test333"  value="1" checked/>普通成人</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test333"  value="2"/>学生</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test333"  value="3"/>教室</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test333"  value="4"/>青年</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test333"  value="5"/>老年</label>&nbsp;&nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>最少成行人数</th>
+                            <td>
+                                <input type="text" name="test5555" class="form-control J_EditControl" size="4"/>人
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="line"></div>
+                    <h5>更多限制</h5>
+                    <table class="table-form">
+                        <tbody>
+                        <tr>
+                            <th width="150">去程航班</th>
+                            <td>
+                                <label><input type="checkbox" name="" class="J_CheckAll" value="1" data-selector=".J_DepDay"/>全选</label>&nbsp;&nbsp;
+                                <a href="#" class="J_CheckAll J_CheckReverse" data-selector=".J_DepDay">反选</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test222" class="J_DepDay" value="1"/>周一</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test222" class="J_DepDay" value="2"/>周二</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test222" class="J_DepDay" value="3"/>周三</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test222" class="J_DepDay" value="4"/>周四</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test222" class="J_DepDay" value="5"/>周五</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test222" class="J_DepDay" value="6"/>周六</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test222" class="J_DepDay" value="7"/>周日</label>
+                            </td>
+                        </tr>
+                        <tr class="J_BackDateArea">
+                            <th>返程航班</th>
+                            <td>
+                                <label><input type="checkbox" name="" class="J_CheckAll" value="1" data-selector=".J_BackDay"/>全选</label>&nbsp;&nbsp;
+                                <a href="#" class="J_CheckAll J_CheckReverse" data-selector=".J_BackDay">反选</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test2221" class="J_BackDay" value="1"/>周一</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test2221" class="J_BackDay" value="2"/>周二</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test2221" class="J_BackDay" value="3"/>周三</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test2221" class="J_BackDay" value="4"/>周四</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test2221" class="J_BackDay" value="5"/>周五</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test2221" class="J_BackDay" value="6"/>周六</label>&nbsp;&nbsp;
+                                <label><input type="checkbox" name="test2221" class="J_BackDay" value="7"/>周日</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>去程航班号</th>
+                            <td>
+                                <input type="text" name="test55552" class="form-control" size="40"/>
+                                <p><span>数字开头，可录入多个，中间用逗号“,”分隔。可录入航班区间，如：000-999,000-888</span></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>去程排除航班号</th>
+                            <td>
+                                <input type="text" name="test55553" class="form-control" size="40"/>
+                            </td>
+                        </tr>
+                        <tr class="J_BackDateArea">
+                            <th>返程航班号</th>
+                            <td>
+                                <input type="text" name="test55554" class="form-control" size="40"/>
+                            </td>
+                        </tr>
+                        <tr class="J_BackDateArea">
+                            <th>返程排除航班号</th>
+                            <td>
+                                <input type="text" name="test55555" class="form-control" size="40"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>去程航班起飞时间</th>
+                            <td>
+                                <div id="J_GoDepTime">
+                                    <div class="J_TableEditContent"></div>
+                                    <textarea name="goDepTimes" id="J_GoDepTimeInput" class="hidden">
+                                    </textarea>
+                                    <script type="text/tmpl" class="J_Tmpl">
+                                    <table class="table-inner table-bordered">
+                                        <thead>
+                                        <tr>
+                                        <th>开始时间</th>
+                                        <th>截止时间</th>
+                                        <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#each data}}
+                                        <tr class="J_Item" data-index="{{xindex}}">
+                                            <td>
+                                                <input type="text" class=" J_EditControl" data-name="startHour" value="{{startHour}}" size="1"/> <span>:</span>
+                                                <input type="text" class=" J_EditControl" data-name="startSecond" value="{{startSecond}}" size="1"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class=" J_EditControl" data-name="endtHour" value="{{endtHour}}" size="1"/> <span>:</span>
+                                                <input type="text" class=" J_EditControl" data-name="endSecond" value="{{endSecond}}" size="1"/>
+                                            </td>
+                                            <td><a href="#" class="J_Del">删除</a></td>
+                                        </tr>
+                                        {{/each}}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="3"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加时间</button></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </script>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="J_BackDateArea">
+                            <th>返程航班起飞时间</th>
+                            <td>
+                                <div id="J_BackDepTimes">
+                                    <div class="J_TableEditContent"></div>
+                                    <textarea name="backFlightTimes" id="J_BackDepTimesInput" class="hidden">
+                                    </textarea>
+                                    <script type="text/tmpl" class="J_Tmpl">
+                                    <table class="table-inner table-bordered">
+                                        <thead>
+                                        <tr>
+                                        <th>开始时间</th>
+                                        <th>截止时间</th>
+                                        <th>操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#each data}}
+                                        <tr class="J_Item" data-index="{{xindex}}">
+                                            <td>
+                                                <input type="text" class=" J_EditControl" data-name="startHour" value="{{startHour}}" size="1"/> <span>:</span>
+                                                <input type="text" class=" J_EditControl" data-name="startSecond" value="{{startSecond}}" size="1"/>
+                                            </td>
+                                            <td>
+                                                <input type="text" class=" J_EditControl" data-name="endtHour" value="{{endtHour}}" size="1"/> <span>:</span>
+                                                <input type="text" class=" J_EditControl" data-name="endSecond" value="{{endSecond}}" size="1"/>
+                                            </td>
+                                            <td><a href="#" class="J_Del">删除</a></td>
+                                        </tr>
+                                        {{/each}}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td colspan="3"><button type="button" class="btn btn-xs btn-info pull-right J_Add">添加时间</button></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </script>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>是否允许销售共享航班</th>
+                            <td>
+                                <label><input type="radio" name="nn" value="1" checked />是</label>&nbsp;&nbsp;
+                                <label><input type="radio" name="nn" value="2" />否</label>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="line"></div>
+                    <h5>价格相关</h5>
+                    <table class="table-form">
+                        <tbody>
+                        <tr>
+                            <th width="150">舱位</th>
+                            <td>
+                                <input type="text" name="test5555111" class="form-control" size="3"/><span>去回程必须一致</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>票面价格</th>
+                            <td>
+                                <input type="text" name="test5555111234" class="form-control J_Upper" size="3"/><span>元</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>提前预定天数</th>
+                            <td>
+                                <span>最早</span><input type="text" name="b234" class="form-control" size="3" ><span>天</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span>最晚</span><input type="text" name="b235" class="form-control" size="3" ><span>天</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>停留时间</th>
+                            <td>
+                                <span>最早</span><input type="text" name="b234" class="form-control" size="3" >
+                                <select class="form-control">
+                                    <option value="天">天</option>
+                                    <option value="月" selected>月</option>
+                                </select>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <span>最晚</span><input type="text" name="b235" class="form-control" size="3" >
+                                <select class="form-control">
+                                    <option value="天">天</option>
+                                    <option value="月" selected>月</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>儿童票</th>
+                            <td>
+                                <label><input type="radio" name="c23412" value="0" checked/>不销售儿童票</label>&nbsp;&nbsp;
+                                <label><input type="radio" name="c23412" value="1"/>儿童与成人同价</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>退改签规定</th>
+                            <td>
+                                <p>
+                                <label>
+                                    是否可退
+                                    <select class="form-control">
+                                        <option value="1">是</option>
+                                        <option value="0" selected>否</option>
+                                    </select>
+                                </label>
+                                &nbsp;&nbsp;
+                                <label>
+                                    是否可更改
+                                    <select class="form-control">
+                                        <option value="1">是</option>
+                                        <option value="0" selected>否</option>
+                                    </select>
+                                </label>
+                                &nbsp;&nbsp;
+                                <label>
+                                    是否可签转
+                                    <select class="form-control">
+                                        <option value="1">是</option>
+                                        <option value="0" selected>否</option>
+                                    </select>
+                                </label>
+                                &nbsp;&nbsp;
+                                <label>
+                                    是否可升舱
+                                    <select class="form-control">
+                                        <option value="1">是</option>
+                                        <option value="0" selected>否</option>
+                                    </select>
+                                </label>
+                                </p>
+                                <p>
+                                    <textarea name="tgq" cols="60"  rows="10" class="form-control"></textarea>
+                                </p>
+                                <p>
+                                    <strong>退票计算基准：</strong>
+                                    <label><input type="radio" name="c234111" value="0" checked/>Y舱价格</label>&nbsp;&nbsp;
+                                    <label><input type="radio" name="c234111" value="1"/>单程票面价格</label>&nbsp;&nbsp;
+                                    <label><input type="radio" name="c234111" value="2"/>往返程票面价一半</label>
+                                </p>
+                                <p>
+                                    <strong>退票计算方法：</strong>
+                                    <label><input type="radio" name="c2341112" value="0" checked/>百分比</label>&nbsp;&nbsp;
+                                    <label><input type="radio" name="c2341112" value="1"/>固定金额</label>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>设置退票费金额/比<span class="required">*</span></th>
+                            <td>
+                                <textarea class="hidden" value="" name="ttttttt" id="J_PriceInput">
+                                    {"hours":[{"hour":-48,"count":"2","unit":24,"abs":-1},{"hour":-24,"count":"1","unit":24,"abs":-1},{"hour":2,"count":"2","unit":"1","abs":"1"}],"interval":[{"title":"早于起飞前2天","value":"5"},{"title":"起飞前2天 至 起飞前1天","value":"1"},{"title":"起飞前1天 至 起飞后2小时","value":"2"},{"title":"晚于起飞后2小时","value":"3"}]}
+                                </textarea>
+                                <div id="J_SetRefundPrice">
+                                    <div class="J_TableEditContent"></div>
+                                    <script type="text/tmpl" class="J_Tmpl">
+                                        <p>输入时间点:
+                                        </p>
+
+                                            {{#each hours}}
+                                            <span class="J_Item refund-price-item" style="padding-right:10px;" data-index="{{xindex}}">
+                                            <select data-name="abs" class="J_EditControl form-control">
+                                                <option value="-1" {{#if hour < 0}} selected {{/if}}>起飞前</option>
+                                                <option value="1" {{#if hour > 0}} selected {{/if}}>起飞后</option>
+                                            </select>
+                                            <input type="text" class="J_EditControl" data-name="count" size="2" value="{{count}}"/>
+                                            <select class="J_EditControl form-control" data-name="unit">
+                                                <option value="24" {{#if unit > 23}}selected{{/if}}>天</option>
+                                                <option value="1" {{#if unit < 24}}selected{{/if}}>小时</option>
+                                            </select>
+                                            <a href="#" class="J_Del">删除</a>
+                                        </span>{{/each}}
+                                            <button type="button" class="btn btn-info btn-sm J_Add">添加时间点</button>
+                                    </script>
+                                    <script type="text/tmpl" class="J_TableDataTmpl">
+                                        <div class="precent-list clearfix">
+                                            {{#each data}}
+                                            <div class="precent-item">
+                                                <p class="tit">{{title}}</p>
+                                                <p class="cnt"><input type="text" class="form-control J_EditControl" data-name="hour" size="3" value="{{value}}" data-index="{{xindex}}"/>%</p>
+                                            </div>
+                                            {{/each}}
+                                        </div>
+                                    </script>
+                                    <p><span class="required">注意：先设置时间点再输入金额比，在时间点修改后，金额比会被重置为空</span></p>
+                                    <div class="J_TableData">
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>EI项</th>
+                            <td>
+                                <input type="text" name="bb2322224" class="form-control" size="4" >
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>TourCode</th>
+                            <td>
+                                <input type="text" name="bb2344445" class="form-control" size="4" >
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>FareBasis</th>
+                            <td>
+                                <input type="text" name="bb211342" class="form-control" size="4" >
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                备注
+                            </th>
+                            <td>
+                                <textarea name="remark" cols="60"  rows="10" class="form-control"></textarea>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="line"></div>
+                    <p style="padding-left:160px;">
+                        <button type="submit" class="btn btn-primary" name="" value="">保存后继续添加舱位</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="submit" class="btn btn-info" name="" value="">保存后返回列表</button>
+                    </p>
+                    <div class="line"></div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>票面价</th>
+                                <th>舱位（去程/回程）</th>
+                                <th>提前预定天数（最晚/最早）</th>
+                                <th>停留时间 （最长/最短）</th>
+                                <th>儿童票</th>
+                                <th>退改签</th>
+                                <th>EI项</th>
+                                <th>TourCode</th>
+                                <th>FareBasis</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><a href="#">编辑</a> <a href="#">删除</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://g.tbcdn.cn/trip/flight-agent/0.0.1/widgets/bootstrap/js/jquery.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://g.tbcdn.cn/trip/flight-agent/0.0.1/widgets/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<!--<2script src="js/respond.js"></script>-->
+<!--<script type="text/javascript" src="http://g.tbcdn.cn/trip/flight-agent/0.0.1/widgets/base/base.js"></script>-->
+<script type="text/javascript">
+    KISSY.use(galleryName + '/form-storage/1.0/index' , function (S,Fs){
+        new Fs({
+            node : '#J_Form'
+        })
+    });
 </script>
 </body>
 </html>

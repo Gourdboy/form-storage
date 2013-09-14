@@ -1,7 +1,83 @@
+/*
+combined files : 
+
+gallery/form-storage/1.0/storage
+gallery/form-storage/1.0/index
+
+*/
+KISSY.add('gallery/form-storage/1.0/storage',function (S,RichBase,LocalStorage,JSON){
+    var E = S.Event;
+    var win = window;
+    var Storage = RichBase.extend({
+        initializer : function (){
+            var storage = new LocalStorage();
+            var pagesSource;
+            if (pagesSource = storage.getItem('formStorage')) {
+                try{
+                    pagesSource = JSON.parse(pagesSource);
+                }
+                catch(e){
+                    pagesSource = {}
+                }
+            }else{
+                pagesSource = {};
+            }
+            this.set('pagesSource' , pagesSource);
+            this.bindUI();
+        },
+        destructor : function (){
+
+        },
+        renderUI : function (){
+
+        },
+        bindUI : function (){
+            /**
+             * 自动保存
+             */
+            this.on('afterPagesSourceChange' , function (e){
+                var sourceStr = JSON.stringify(this.get('pagesSource'));
+                var storage = new LocalStorage();
+                storage.setItem('formStorage' , sourceStr);
+            },this);
+        },
+        /**
+         * 讲当前
+         */
+        save : function (pagePath , formId , data){
+            var pagesSource = this.get('pagesSource');
+            if (!pagesSource[pagePath]) {
+                pagesSource[pagePath] = {};
+            }
+            pagesSource[pagePath][formId] = data;
+            this.set('pagesSource' , S.merge({},pagesSource));
+        },
+        /**
+         * 读取本地存储数据
+         */
+        load : function (pagePath , formId){
+            var pageSource = this.get('pagesSource');
+            if (!pageSource[pagePath]) {
+                return null;
+            }
+            if (!pageSource[pagePath][formId]) {
+                return null;
+            }
+            return pageSource[pagePath][formId];
+        }
+    },{
+        ATTRS : {
+            pagesSource : {
+                value : null
+            }
+        }
+    });
+    return new Storage();
+},{requires : ['rich-base','gallery/offline/1.1/index','json','node' , 'event']});
 /**
  * 基于本地存储实现的表单临时保存功能，支持自动保存，用户自定义保存
  */
-KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
+KISSY.add('gallery/form-storage/1.0/index',function (S,RichBase , Ajax , Tmpl , Storage){
     var win = window;
     var pagePath = win.location.pathname;
     var historyTmpl = '<ul>{{#each data}}<li class="J_Item" data-index="{{xindex}}">{{#if remark}}<span class="label label-warning">{{/if}}{{remark}}{{#if remark}}</span>{{/if}}  {{title}} <a href="#" class="J_Restore">恢复</a> <a href="#" class="J_EditRemark">备注</a> <a href="#" class="J_DelStorage">删除</a></li>{{/each}}</ul>';

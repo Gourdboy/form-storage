@@ -16,14 +16,14 @@
 * 查询表单，查询条件较多，经常需要重复查询想偷懒不想重复输入的情况.
 * 开发过程中需要反复测试表单数据完整性时。。。
 
-### Useage
+### Usage
 
 * 保存表单内容到本地，避免丢失和重复填写。
 * 可自动保存。
 * 可对保存的表单进行备注方便归类。
 
 
-### Instructions
+### Invoke
 
 
 ```javascript
@@ -42,7 +42,7 @@
 
 ### Config(element attribute && attribute)
 
-|custom attribute|attribute|value|description|
+|element attribute|attribute|value|description|
 |:---------------|:--------|:----|:----------|
 |data-save|无|on   off|启用自动存储，建议form有自己的ID,否则会自动创建，且以后有新表单存在时可能带来数据不能对应的问题|
 |data-auto-save|allowAutoSave| on   off|是否启用自动保存功能，启用后会在提交表单以及设定的间隔时间自动进行存储|

@@ -7,25 +7,24 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
     var historyTmpl = '<ul>{{#each data}}<li class="J_Item" data-index="{{xindex}}">{{#if remark}}<span class="label label-warning">{{/if}}{{remark}}{{#if remark}}</span>{{/if}}  {{title}} <a href="#" class="J_Restore">恢复</a> <a href="#" class="J_EditRemark">备注</a> <a href="#" class="J_DelStorage">删除</a></li>{{/each}}</ul>';
     var FormStorage = RichBase.extend({
         initializer : function (){
-            if (!this.get('node')) {
+            var form = this.get('node');
+            var source;
+            if (!form) {
                 return;
             }
-            var form = this.get('node');
             var formId = this.get('node').attr('id');
             if (!formId) {
                 return;
             }
 
             /*parse html to attribute*/
-            var timer = form.attr('data-auto-save-timer');
-            timer && this.set('autoSaveTimer' , timer);
+            this.set('autoSaveTimer' , form.attr('data-auto-save-timer') || this.get('autoSaveTimer'));
             this.set('allowAutoSave' , form.attr('data-auto-save') === 'on' ? true : false);
             this.set('autoSaveMax' , form.attr('data-auto-save-max') || this.get('autoSaveMax'));
 
             this.renderUI();
             this.bindUI();
-            var source = Storage.load(pagePath,formId);
-            if (source) {
+            if (source = Storage.load(pagePath,formId)) {
                 this.set('source' , source);
             }
         },
@@ -59,28 +58,17 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                 var index = S.one(e.currentTarget).parent('.J_Item').attr('data-index');
                 this._edit(index);
             },this);
-            form.delegate('click' , '.J_AddStorage' , function (e){
-                e.preventDefault();
-                var data = this.formToData(this.get('node'));
-                if (!data) {
-                    return;
-                }
-                var time = new Date();
-                this.add({
-                    type  : 1,//手动添加
-                    remark: '',
-                    time  : time,
-                    data  : data
-                });
-            },this);
             this.on('afterSourceChange' , this._syncHistoryUI , this);
             var that = this;
+            //手动保存
+            form.delegate('click' , '.J_AddStorage' , function (e){
+                e.preventDefault();
+                this.save();
+            },this);
             //自动保存
             if (this.get('allowAutoSave')) {
                 var autoTimer = this.get('autoSaveTimer');
                 setInterval(function (){
-                    var data = that.formToData(form);
-
                     /**
                      * 自动保存条数不超过指定条数
                      */
@@ -95,13 +83,7 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                     if (autoCount > that.get('autoSaveMax')) {
                         that.del(lastAutoIndex);
                     }
-
-                    var time = new Date();
-                    that.add({
-                        type : 0,//自动添加
-                        time : time + 0,
-                        data : data
-                    },'auto');
+                    that.save();
                 },1000*autoTimer);
             }
         },
@@ -170,7 +152,10 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
                 else{
                     node.val(item[1]);
                 }
-            });
+                this.fire('restoreitem' , {
+                    node : node
+                });
+            },this);
             /**
              * 数据发生变更时触发
              * @event sourceChange
@@ -187,7 +172,18 @@ KISSY.add(function (S,RichBase , Ajax , Tmpl , Storage){
          * @param object
          * @returns {*}
          */
-        add : function (object,isAuto){
+        save : function (object){
+            var data = this.formToData(this.get('node'));
+            var time = new Date();
+            if (!data) {
+                return;
+            }
+            object = object || {
+                type  : 1,//手动添加
+                remark: '',
+                time  : time,
+                data  : data
+            };
             var source = this.get('source');
             var form = this.get('form');
             source = source.concat();

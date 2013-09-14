@@ -1,7 +1,7 @@
 {
     "name": "form-storage",
     "version": "1.0",
-    "desc": "",
+    "desc": "基于本地存储实现的表单临时存储，解决表单内容重复填写，意外丢失等问题.",
     "cover": "",
     "tag":"form,storage,auto,save",
     "author": {
